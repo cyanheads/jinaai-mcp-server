@@ -10,10 +10,7 @@ import { initializeAndStartServer } from "../../src/mcp-server/server.js";
 import { startStdioTransport } from "../../src/mcp-server/transports/stdio/index.js";
 import { startHttpTransport } from "../../src/mcp-server/transports/http/index.js";
 import { ErrorHandler } from "../../src/utils/index.js";
-import { registerEchoResource } from "../../src/mcp-server/resources/echoResource/index.js";
-import { registerEchoTool } from "../../src/mcp-server/tools/echoTool/index.js";
-import { registerCatFactFetcherTool } from "../../src/mcp-server/tools/catFactFetcher/index.js";
-import { registerFetchImageTestTool } from "../../src/mcp-server/tools/imageTest/index.js";
+import { registerJinaReaderTool } from "../../src/mcp-server/tools/jinaReader/index.js";
 
 // Mock dependencies
 vi.mock("@modelcontextprotocol/sdk/server/mcp.js", () => {
@@ -59,20 +56,8 @@ vi.mock("../../src/utils/index.js", async (importOriginal) => {
   };
 });
 
-vi.mock("../../src/mcp-server/resources/echoResource/index.js", () => ({
-  registerEchoResource: vi.fn(),
-}));
-
-vi.mock("../../src/mcp-server/tools/catFactFetcher/index.js", () => ({
-  registerCatFactFetcherTool: vi.fn(),
-}));
-
-vi.mock("../../src/mcp-server/tools/echoTool/index.js", () => ({
-  registerEchoTool: vi.fn(),
-}));
-
-vi.mock("../../src/mcp-server/tools/imageTest/index.js", () => ({
-  registerFetchImageTestTool: vi.fn(),
+vi.mock("../../src/mcp-server/tools/jinaReader/index.js", () => ({
+  registerJinaReaderTool: vi.fn(),
 }));
 
 vi.mock("../../src/mcp-server/transports/http/index.js", () => ({
@@ -104,10 +89,7 @@ describe("MCP Server Initialization", () => {
     expect(McpServer).toHaveBeenCalledTimes(1);
     expect(startStdioTransport).toHaveBeenCalledTimes(1);
     expect(startHttpTransport).not.toHaveBeenCalled();
-    expect(registerEchoResource).toHaveBeenCalled();
-    expect(registerEchoTool).toHaveBeenCalled();
-    expect(registerCatFactFetcherTool).toHaveBeenCalled();
-    expect(registerFetchImageTestTool).toHaveBeenCalled();
+    expect(registerJinaReaderTool).toHaveBeenCalled();
   });
 
   it("should initialize and start with http transport", async () => {
@@ -154,7 +136,7 @@ describe("MCP Server Initialization", () => {
   it("should handle registration failures gracefully and exit", async () => {
     config.mcpTransportType = "stdio";
     const registrationError = new Error("Registration failed");
-    vi.mocked(registerEchoTool).mockRejectedValueOnce(registrationError);
+    vi.mocked(registerJinaReaderTool).mockRejectedValueOnce(registrationError);
 
     await initializeAndStartServer();
 
