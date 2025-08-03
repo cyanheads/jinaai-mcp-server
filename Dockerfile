@@ -24,17 +24,17 @@ FROM node:22-alpine AS production
 
 WORKDIR /usr/src/app
 
-# Set the environment to production.
-ENV NODE_ENV=production
+# Set the environment to development.
+ENV NODE_ENV=development
 
 # Create a non-root user and group for better security.
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 
 # Copy only the necessary production artifacts from the build stage.
-# This includes production node_modules and the compiled 'dist' folder.
+# This includes the pruned production node_modules and the compiled 'dist' folder.
 COPY --from=build /usr/src/app/dist ./dist
 COPY --from=build /usr/src/app/node_modules ./node_modules
-COPY package.json .
+COPY --from=build /usr/src/app/package.json ./
 
 # Switch to the non-root user.
 USER appuser

@@ -39,6 +39,6 @@ startCommand:
   # Provides an example configuration for users.
   exampleConfig:
     JINA_API_KEY: "sk-example123456789"
-    MCP_LOG_LEVEL: "info"
+    MCP_LOG_LEVEL: "debug"
     MCP_TRANSPORT_TYPE: "http"
     MCP_HTTP_PORT: 3018
