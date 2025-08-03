@@ -1,28 +1,44 @@
+# Smithery configuration for a custom Docker container deployment.
+# This file instructs Smithery on how to build and run the MCP server.
+runtime: "container"
+
+# Specifies the Docker build configuration.
+build:
+  # Path to the Dockerfile in the repository.
+  dockerfile: "Dockerfile"
+  # The context path for the Docker build.
+  dockerBuildPath: "."
+
+# Defines how to start the server once the container is built.
 startCommand:
-  type: http
+  # Specifies that the server communicates over HTTP.
+  type: "http"
+  # Defines the configuration variables the server expects.
+  # These are passed as environment variables or query parameters.
   configSchema:
-    type: object
+    type: "object"
     properties:
+      JINA_API_KEY:
+        type: "string"
+        description: "API key for the Jina AI service."
+      MCP_LOG_LEVEL:
+        type: "string"
+        default: "info"
+        description: "Minimum logging level."
       MCP_TRANSPORT_TYPE:
-        type: string
+        type: "string"
         enum: ["stdio", "http"]
         default: "http"
         description: "MCP communication transport ('stdio' or 'http')."
       MCP_HTTP_PORT:
-        type: integer
+        type: "integer"
         default: 3018
         description: "HTTP server port (if MCP_TRANSPORT_TYPE is 'http')."
-      MCP_LOG_LEVEL:
-        type: string
-        default: "debug"
-        description: "Minimum logging level."
-  commandFunction: |
-    (config) => ({
-      "command": "npx",
-      "args": ["@cyanheads/jinaai-mcp-server"],
-      "env": {
-        "MCP_TRANSPORT_TYPE": config.MCP_TRANSPORT_TYPE,
-        "MCP_HTTP_PORT": config.MCP_HTTP_PORT,
-        "MCP_LOG_LEVEL": config.MCP_LOG_LEVEL
-      }
-    })
+    required:
+      - "JINA_API_KEY"
+  # Provides an example configuration for users.
+  exampleConfig:
+    JINA_API_KEY: "sk-example123456789"
+    MCP_LOG_LEVEL: "info"
+    MCP_TRANSPORT_TYPE: "http"
+    MCP_HTTP_PORT: 3018

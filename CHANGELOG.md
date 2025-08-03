@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.3] - 2025-08-03
+
+### Changed
+
+- **Build**: Refactored the `Dockerfile` to use a more efficient and secure multi-stage build process. This results in a smaller, more secure production image.
+- **Configuration**: Updated `smithery.yaml` to latest schema to support a container-based runtime, including a more detailed configuration schema for improved clarity and validation.
+- **Dependencies**: Bumped the package version to `1.0.3` in `package.json` and `package-lock.json`.
+
 ## [1.0.2] - 2025-08-03
 
 ### Changed

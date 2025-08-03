@@ -1,6 +1,6 @@
 # jinaai-mcp-server - Directory Structure
 
-Generated on: 2025-08-03 11:52:26
+Generated on: 2025-08-03 12:37:40
 
 ```
 jinaai-mcp-server

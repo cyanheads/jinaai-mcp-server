@@ -1,49 +1,50 @@
-# ---- Base Node ----
-# Use a specific Node.js version known to work, Alpine for smaller size
-FROM node:23-alpine AS base
-WORKDIR /usr/src/app
-ENV NODE_ENV=production
+# ---- Build Stage ----
+# Use a Long-Term Support (LTS) version of Node.js for stability.
+# 'alpine' provides a smaller base image.
+FROM node:22-alpine AS build
 
-# ---- Dependencies ----
-# Install dependencies first to leverage Docker cache
-FROM base AS deps
+# Set the working directory inside the container.
 WORKDIR /usr/src/app
-COPY package.json package-lock.json* ./
-# Use npm ci for deterministic installs based on lock file
-# Install only production dependencies in this stage for the final image
-RUN npm ci --only=production
 
-# ---- Builder ----
-# Build the application
-FROM base AS builder
-WORKDIR /usr/src/app
-# Copy dependency manifests and install *all* dependencies (including dev)
+# Copy package.json and lockfile to leverage Docker layer caching.
 COPY package.json package-lock.json* ./
+
+# Install all dependencies, including devDependencies needed for the build.
 RUN npm ci
-# Copy the rest of the source code
+
+# Copy the rest of the application source code.
 COPY . .
-# Build the TypeScript project
+
+# Run the build script to compile TypeScript to JavaScript.
 RUN npm run build
 
-# ---- Runner ----
-# Final stage with only production dependencies and built code
-FROM base AS runner
+# ---- Production Stage ----
+# Start from a fresh, minimal Node.js image.
+FROM node:22-alpine AS production
+
 WORKDIR /usr/src/app
-# Copy production node_modules from the 'deps' stage
-COPY --from=deps /usr/src/app/node_modules ./node_modules
-# Copy built application from the 'builder' stage
-COPY --from=builder /usr/src/app/dist ./dist
-# Copy package.json (needed for potential runtime info, like version)
+
+# Set the environment to production.
+ENV NODE_ENV=production
+
+# Create a non-root user and group for better security.
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+
+# Copy only the necessary production artifacts from the build stage.
+# This includes production node_modules and the compiled 'dist' folder.
+COPY --from=build /usr/src/app/dist ./dist
+COPY --from=build /usr/src/app/node_modules ./node_modules
 COPY package.json .
 
-# Create a non-root user and switch to it
-RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+# Switch to the non-root user.
 USER appuser
 
-# Expose port if the application runs a server (adjust if needed)
+# The server will listen on the port provided by the PORT environment variable.
+# Smithery provides this automatically. We expose it for documentation.
+EXPOSE 3018
+ENV PORT=3018
 ENV MCP_TRANSPORT_TYPE=http
-EXPOSE 3010
+ENV MCP_LOG_LEVEL=info
 
-# Command to run the application
-# This will execute the binary defined in package.json
-CMD ["npx", "mcp-ts-template"]
+# The command to start the server.
+CMD ["node", "dist/index.js"]
