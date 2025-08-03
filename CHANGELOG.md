@@ -2,9 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.2] - 2025-08-03
+
+### Changed
+
+- **Refactor**: Removed unused services (`duck-db`, `openRouterProvider`, `supabase`) to streamline the codebase.
+- **Configuration**: Updated `package.json` to reflect the new package name `@cyanheads/jinaai-mcp-server`, updated the version to `1.0.2`, and changed the default HTTP port to `3018` across the codebase.
+- **Build**: Added `mcp.json` for easier server configuration and execution.
+
 ## [1.0.1] - 2025-08-03
 
 ### Changed
+
 - **Tests**: Refactored the test suite to focus exclusively on the `jinaai_read_webpage` tool, removing all legacy tests and adding comprehensive integration tests for the new tool.
 - **Dependencies**: Updated `package.json` and `package-lock.json` with the new version `1.0.1`.
 - **Bug Fix**: Corrected a minor typo in the `jinaReader` logic.
