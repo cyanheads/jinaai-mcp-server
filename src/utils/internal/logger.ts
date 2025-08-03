@@ -370,7 +370,8 @@ export class Logger {
       (t) => t instanceof winston.transports.Console,
     );
     const shouldHaveConsole =
-      this.currentMcpLevel === "debug" && process.stdout.isTTY;
+      config.forceConsoleLogging ||
+      (this.currentMcpLevel === "debug" && process.stdout.isTTY);
     let message: string | null = null;
 
     if (shouldHaveConsole && !consoleTransport) {

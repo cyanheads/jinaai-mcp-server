@@ -1,6 +1,6 @@
 {
   "name": "@cyanheads/jinaai-mcp-server",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A Model Context Protocol (MCP) server that provides intelligent web reading capabilities using the Jina AI Reader API. It extracts clean, LLM-ready content from any URL.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

@@ -168,6 +168,13 @@ const EnvSchema = z.object({
   // --- Jina AI Configuration ---
   JINA_API_KEY: z.string().optional(),
 
+  // --- START: Logging Configuration ---
+  /** If 'true', forces console logging even if stdout is not a TTY. Useful for Docker/Containers. */
+  MCP_FORCE_CONSOLE_LOGGING: z
+    .string()
+    .transform((v) => v.toLowerCase() === "true")
+    .default("false"),
+
   // --- START: OpenTelemetry Configuration ---
   /** If 'true', OpenTelemetry will be initialized and enabled. Default: 'false'. */
   OTEL_ENABLED: z
@@ -346,6 +353,7 @@ export const config = {
         }
       : undefined,
   jinaApiKey: env.JINA_API_KEY,
+  forceConsoleLogging: env.MCP_FORCE_CONSOLE_LOGGING,
   openTelemetry: {
     enabled: env.OTEL_ENABLED,
     serviceName: env.OTEL_SERVICE_NAME || env.MCP_SERVER_NAME || pkg.name,

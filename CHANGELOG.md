@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.4] - 2025-08-03
+
+### Changed
+
+- **Docker & Logging**: Enhanced Docker support by adding `MCP_HTTP_HOST` to bind the server to a specific host and `MCP_FORCE_CONSOLE_LOGGING` to ensure logs are always sent to the console in containerized environments.
+- **Configuration**: Updated `smithery.yaml` and `Dockerfile` to include the new environment variables.
+- **Dependencies**: Bumped the package version to `1.0.4` in `package.json` and `package-lock.json`.
+
 ## [1.0.3] - 2025-08-03
 
 ### Changed

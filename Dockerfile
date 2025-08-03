@@ -46,11 +46,13 @@ USER appuser
 # Smithery provides this automatically. We expose it for documentation.
 EXPOSE 3018
 ENV MCP_HTTP_PORT=3018
+ENV MCP_HTTP_HOST=0.0.0.0
 ENV MCP_TRANSPORT_TYPE=http
 ENV MCP_SESSION_MODE=stateless
 ENV MCP_LOG_LEVEL=info
 ENV LOGS_DIR=/var/log/jinaaimcp-server
 ENV MCP_AUTH_MODE=none
+ENV MCP_FORCE_CONSOLE_LOGGING=true
 
 # The command to start the server.
 CMD ["node", "dist/index.js"]
