@@ -409,6 +409,11 @@ export class ErrorHandler {
         : new Date().toISOString();
 
     const logPayload: Record<string, unknown> = {
+      ...Object.fromEntries(
+        Object.entries(context).filter(
+          ([key]) => key !== "requestId" && key !== "timestamp",
+        ),
+      ),
       requestId: logRequestId,
       timestamp: logTimestamp,
       operation,
@@ -417,11 +422,6 @@ export class ErrorHandler {
       errorCode: loggedErrorCode,
       originalErrorType: originalErrorName,
       finalErrorType: getErrorName(finalError),
-      ...Object.fromEntries(
-        Object.entries(context).filter(
-          ([key]) => key !== "requestId" && key !== "timestamp",
-        ),
-      ),
     };
 
     if (finalError instanceof McpError && finalError.details) {
@@ -439,7 +439,7 @@ export class ErrorHandler {
     }
 
     logger.error(
-      `Error in ${operation}: ${finalError.message || originalErrorMessage}`,
+      finalError.message || originalErrorMessage,
       logPayload as unknown as RequestContext, // Cast to RequestContext for logger compatibility
     );
 

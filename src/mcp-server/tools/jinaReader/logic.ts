@@ -79,7 +79,7 @@ export async function readWebpageToolLogic(
     // Default: None
     // Best Quality: "browser"
     // Speed: "direct"
-    // Experimental: "cf-browser-rendering" 
+    // Experimental: "cf-browser-rendering"
     "X-Engine": "browser",
     "X-Locale": "en-US",
     "X-Proxy": "auto",
