@@ -44,13 +44,11 @@ USER appuser
 
 # The server will listen on the port provided by the MCP_HTTP_PORT environment variable.
 # Smithery provides this automatically. We expose it for documentation.
-EXPOSE 3018
 
-# Set port for Smithery
-ENV PORT=3018
-
-# Set environment variables for the MCP server.
-ENV MCP_HTTP_PORT=3018
+# The PORT environment variable is automatically provided by the Smithery platform.
+# We set MCP_HTTP_PORT to the value of PORT to ensure the server listens on the correct port.
+ENV MCP_HTTP_PORT=$PORT
+EXPOSE $PORT
 ENV MCP_HTTP_HOST=0.0.0.0
 ENV MCP_TRANSPORT_TYPE=http
 ENV MCP_SESSION_MODE=stateless
