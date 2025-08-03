@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.1] - 2025-08-03
+
+### Changed
+- **Tests**: Refactored the test suite to focus exclusively on the `jinaai_read_webpage` tool, removing all legacy tests and adding comprehensive integration tests for the new tool.
+- **Dependencies**: Updated `package.json` and `package-lock.json` with the new version `1.0.1`.
+- **Bug Fix**: Corrected a minor typo in the `jinaReader` logic.
+- **Refactor**: Improved the `errorHandler` to provide more structured and readable logs.
+
 ## [1.0.0] - 2025-08-03
 
 ### BREAKING CHANGE

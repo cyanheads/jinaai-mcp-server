@@ -1,6 +1,6 @@
 # jinaai-mcp-server - Directory Structure
 
-Generated on: 2025-08-03 10:56:28
+Generated on: 2025-08-03 11:29:33
 
 ```
 jinaai-mcp-server
@@ -116,13 +116,8 @@ jinaai-mcp-server
 ├── tests
 │   ├── mcp-server
 │   │   ├── tools
-│   │   │   ├── catFactFetcher
-│   │   │   │   ├── logic.test.ts
-│   │   │   │   └── registration.test.ts
-│   │   │   ├── echoTool
-│   │   │   │   ├── logic.test.ts
-│   │   │   │   └── registration.test.ts
-│   │   │   └── imageTest
+│   │   │   └── jinaReader
+│   │   │       ├── logic.test.ts
 │   │   │       └── registration.test.ts
 │   │   ├── transports
 │   │   │   ├── auth

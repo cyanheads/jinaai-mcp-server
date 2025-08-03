@@ -6,8 +6,8 @@
 
 [![TypeScript](https://img.shields.io/badge/TypeScript-^5.8.3-blue.svg?style=flat-square)](https://www.typescriptlang.org/)
 [![Model Context Protocol](https://img.shields.io/badge/MCP%20SDK-^1.17.1-green.svg?style=flat-square)](https://modelcontextprotocol.io/)
-[![Version](https://img.shields.io/badge/Version-2.4-blue.svg?style=flat-square)](./CHANGELOG.md)
-[![Coverage](https://img.shields.io/badge/Coverage-61.03%25-yellow?style=flat-square)](./vitest.config.ts)
+[![Version](https://img.shields.io/badge/Version-1.0.1-blue.svg?style=flat-square)](./CHANGELOG.md)
+[![Coverage](https://img.shields.io/badge/Coverage-60.39%25-yellow?style=flat-square)](./vitest.config.ts)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg?style=flat-square)](https://opensource.org/licenses/Apache-2.0)
 [![Status](https://img.shields.io/badge/Status-Stable-green.svg?style=flat-square)](https://github.com/cyanheads/jinaai-mcp-server/issues)
 [![GitHub](https://img.shields.io/github/stars/cyanheads/jinaai-mcp-server?style=social)](https://github.com/cyanheads/jinaai-mcp-server)
@@ -22,18 +22,18 @@ Built on the [`cyanheads/mcp-ts-template`](https://github.com/cyanheads/mcp-ts-t
 
 This server equips your AI with a specialized tool to interact with web content:
 
-| Tool Name | Description | Example |
-| :--- | :--- | :--- |
+| Tool Name                                                   | Description                                                                                                                                                          | Example                                               |
+| :---------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :---------------------------------------------------- |
 | [`jinaai_read_webpage`](./src/mcp-server/tools/jinaReader/) | Extracts and processes the main content from a given URL using Jina AI's ReaderLM engine. It returns a clean, markdown-formatted text representation of the content. | [View Example](./docs/jinaai_read_webpage_example.md) |
 
 ---
 
 ## Table of Contents
 
-| [Overview](#overview) | [Features](#features) | [Installation](#installation) |
-| :--- | :--- | :--- |
+| [Overview](#overview)           | [Features](#features)                   | [Installation](#installation)                  |
+| :------------------------------ | :-------------------------------------- | :--------------------------------------------- |
 | [Configuration](#configuration) | [Project Structure](#project-structure) | [Development & Testing](#development--testing) |
-| [License](#license) | | |
+| [License](#license)             |                                         |                                                |
 
 ## Overview
 
@@ -76,6 +76,28 @@ Leverages the robust utilities provided by the `mcp-ts-template`:
 - [Node.js (>=18.0.0)](https://nodejs.org/)
 - [npm](https://www.npmjs.com/) (comes with Node.js)
 
+### MCP Client Settings
+
+Add the following to your MCP client's configuration file (e.g., `cline_mcp_settings.json`).
+This configuration uses `npx` to run the server, which will automatically install the package if not already present.
+The `JINA_API_KEY` is required for the server to function.
+
+```json
+{
+  "mcpServers": {
+    "jinaai-mcp-server": {
+      "command": "npx",
+      "args": ["@cyanheads/jinaai-mcp-server"],
+      "env": {
+        "MCP_TRANSPORT_TYPE": "http",
+        "MCP_HTTP_PORT": "3010",
+        "JINA_API_KEY": "YOUR_JINA_API_KEY_HERE"
+      }
+    }
+  }
+}
+```
+
 ### From Source
 
 1.  Clone the repository:
@@ -98,13 +120,13 @@ Leverages the robust utilities provided by the `mcp-ts-template`:
 
 Configure the server using environment variables. For local development, create a `.env` file at the project root.
 
-| Variable | Description | Default |
-| :--- | :--- | :--- |
-| `JINA_API_KEY` | **Required.** Your API key for the Jina AI service. | (none) |
-| `MCP_TRANSPORT_TYPE` | Transport mechanism: `stdio` or `http`. | `stdio` |
-| `MCP_HTTP_PORT` | Port for the HTTP server (if `MCP_TRANSPORT_TYPE=http`). | `3010` |
-| `LOGS_DIR` | Directory for log file storage. | `logs/` |
-| `NODE_ENV` | Runtime environment (`development`, `production`). | `development` |
+| Variable             | Description                                              | Default       |
+| :------------------- | :------------------------------------------------------- | :------------ |
+| `JINA_API_KEY`       | **Required.** Your API key for the Jina AI service.      | (none)        |
+| `MCP_TRANSPORT_TYPE` | Transport mechanism: `stdio` or `http`.                  | `stdio`       |
+| `MCP_HTTP_PORT`      | Port for the HTTP server (if `MCP_TRANSPORT_TYPE=http`). | `3010`        |
+| `LOGS_DIR`           | Directory for log file storage.                          | `logs/`       |
+| `NODE_ENV`           | Runtime environment (`development`, `production`).       | `development` |
 
 ## Project Structure
 
