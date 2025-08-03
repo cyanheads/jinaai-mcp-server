@@ -1,6 +1,6 @@
 # jinaai-mcp-server - Directory Structure
 
-Generated on: 2025-08-03 11:29:33
+Generated on: 2025-08-03 11:52:26
 
 ```
 jinaai-mcp-server
@@ -69,17 +69,6 @@ jinaai-mcp-server
 │   │   │       └── stdioTransport.ts
 │   │   └── server.ts
 │   ├── services
-│   │   ├── duck-db
-│   │   │   ├── duckDBConnectionManager.ts
-│   │   │   ├── duckDBQueryExecutor.ts
-│   │   │   ├── duckDBService.ts
-│   │   │   └── types.ts
-│   │   ├── llm-providers
-│   │   │   └── openRouterProvider.ts
-│   │   └── supabase
-│   │       └── supabaseClient.ts
-│   ├── storage
-│   │   └── duckdbExample.ts
 │   ├── types-global
 │   │   └── errors.ts
 │   ├── utils
@@ -133,15 +122,6 @@ jinaai-mcp-server
 │   ├── mocks
 │   │   ├── handlers.ts
 │   │   └── server.ts
-│   ├── services
-│   │   ├── duck-db
-│   │   │   ├── duckDBConnectionManager.test.ts
-│   │   │   ├── duckDBQueryExecutor.test.ts
-│   │   │   └── duckDBService.test.ts
-│   │   ├── llm-providers
-│   │   │   └── openRouterProvider.test.ts
-│   │   └── supabase
-│   │       └── supabaseClient.test.ts
 │   ├── utils
 │   │   ├── internal
 │   │   │   ├── errorHandler.test.ts
@@ -171,6 +151,7 @@ jinaai-mcp-server
 ├── Dockerfile
 ├── eslint.config.js
 ├── LICENSE
+├── mcp.json
 ├── package-lock.json
 ├── package.json
 ├── README.md

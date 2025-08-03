@@ -90,7 +90,7 @@ The `JINA_API_KEY` is required for the server to function.
       "args": ["@cyanheads/jinaai-mcp-server"],
       "env": {
         "MCP_TRANSPORT_TYPE": "http",
-        "MCP_HTTP_PORT": "3010",
+        "MCP_HTTP_PORT": "3018",
         "JINA_API_KEY": "YOUR_JINA_API_KEY_HERE"
       }
     }
@@ -124,7 +124,7 @@ Configure the server using environment variables. For local development, create 
 | :------------------- | :------------------------------------------------------- | :------------ |
 | `JINA_API_KEY`       | **Required.** Your API key for the Jina AI service.      | (none)        |
 | `MCP_TRANSPORT_TYPE` | Transport mechanism: `stdio` or `http`.                  | `stdio`       |
-| `MCP_HTTP_PORT`      | Port for the HTTP server (if `MCP_TRANSPORT_TYPE=http`). | `3010`        |
+| `MCP_HTTP_PORT`      | Port for the HTTP server (if `MCP_TRANSPORT_TYPE=http`). | `3018`        |
 | `LOGS_DIR`           | Directory for log file storage.                          | `logs/`       |
 | `NODE_ENV`           | Runtime environment (`development`, `production`).       | `development` |
 

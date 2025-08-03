@@ -1,25 +1,25 @@
 startCommand:
-  type: stdio
+  type: http
   configSchema:
     type: object
     properties:
       MCP_TRANSPORT_TYPE:
         type: string
         enum: ["stdio", "http"]
-        default: "stdio"
+        default: "http"
         description: "MCP communication transport ('stdio' or 'http')."
       MCP_HTTP_PORT:
         type: integer
-        default: 3010
+        default: 3018
         description: "HTTP server port (if MCP_TRANSPORT_TYPE is 'http')."
       MCP_LOG_LEVEL:
         type: string
-        default: "info"
+        default: "debug"
         description: "Minimum logging level."
   commandFunction: |
     (config) => ({
       "command": "npx",
-      "args": ["mcp-ts-template"],
+      "args": ["@cyanheads/jinaai-mcp-server"],
       "env": {
         "MCP_TRANSPORT_TYPE": config.MCP_TRANSPORT_TYPE,
         "MCP_HTTP_PORT": config.MCP_HTTP_PORT,

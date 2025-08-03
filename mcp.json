@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "jinaai-mcp-server": {
+      "command": "npx",
+      "args": ["@cyanheads/jinaai-mcp-server"],
+      "env": {
+        "MCP_TRANSPORT_TYPE": "http",
+        "MCP_HTTP_PORT": "3018",
+        "JINA_API_KEY": "YOUR_JINA_API_KEY_HERE"
+      }
+    }
+  }
+}
