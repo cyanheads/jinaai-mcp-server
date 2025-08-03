@@ -1,9 +1,7 @@
 /**
- * @fileoverview Handles registration of the `fetch_image_test` tool.
- * This module acts as the "handler" layer, connecting the pure business logic to the
- * MCP server and ensuring all outcomes (success or failure) are handled gracefully.
- * @module src/mcp-server/tools/imageTest/registration
- * @see {@link src/mcp-server/tools/imageTest/logic.ts} for the core business logic and schemas.
+ * @fileoverview Handles registration and error handling for the `jinaai_read_webpage` tool.
+ * @module src/mcp-server/tools/jinaReader/registration
+ * @see {@link src/mcp-server/tools/jinaReader/logic.ts} for the core business logic and schemas.
  */
 
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
@@ -15,30 +13,17 @@ import {
   requestContextService,
 } from "../../../utils/index.js";
 import {
-  FetchImageTestInput,
-  FetchImageTestInputSchema,
-  fetchImageTestLogic,
-  FetchImageTestResponseSchema,
+  ReadWebpageInput,
+  ReadWebpageInputSchema,
+  ReadWebpageResponseSchema,
+  readWebpageToolLogic,
 } from "./logic.js";
 
-/**
- * The unique name for the tool, used for registration and identification.
- * Include the server's namespace if applicable, e.g., "pubmed_fetch_article".
- */
-const TOOL_NAME = "fetch_image_test";
-
-/**
- * Detailed description for the MCP Client (LLM), explaining the tool's purpose, expectations,
- * and behavior. This follows the best practice of providing rich context to the MCP Client (LLM) model. Use concise, authoritative language.
- */
+const TOOL_NAME = "jinaai_read_webpage";
 const TOOL_DESCRIPTION =
-  "Fetches a random cat image from an external API (cataas.com) and returns it as a blob. Useful for testing image handling capabilities.";
+  "Extracts and processes the main content from a given URL using Jina AI's ReaderLM engine for text extraction. It returns a clean, markdown-formatted text representation of the content, suitable for further analysis or summarization. You can use this tool to fetch content from a URL.";
 
-/**
- * Registers the fetch_image_test tool with the MCP server.
- * @param server - The McpServer instance.
- */
-export const registerFetchImageTestTool = async (
+export const registerJinaReaderTool = async (
   server: McpServer,
 ): Promise<void> => {
   const registrationContext = requestContextService.createRequestContext({
@@ -53,17 +38,17 @@ export const registerFetchImageTestTool = async (
       server.registerTool(
         TOOL_NAME,
         {
-          title: "Fetch Cat Image",
+          title: "Read Webpage",
           description: TOOL_DESCRIPTION,
-          inputSchema: FetchImageTestInputSchema.shape,
-          outputSchema: FetchImageTestResponseSchema.shape,
+          inputSchema: ReadWebpageInputSchema.shape,
+          outputSchema: ReadWebpageResponseSchema.shape,
           annotations: {
             readOnlyHint: true,
             openWorldHint: true,
           },
         },
         async (
-          input: FetchImageTestInput,
+          params: ReadWebpageInput,
           callContext: Record<string, unknown>,
         ) => {
           const sessionId =
@@ -76,22 +61,22 @@ export const registerFetchImageTestTool = async (
             operation: "HandleToolRequest",
             toolName: TOOL_NAME,
             sessionId,
-            input,
+            input: params,
           });
 
           try {
             const result = await measureToolExecution(
-              () => fetchImageTestLogic(input, handlerContext),
+              () => readWebpageToolLogic(params, handlerContext),
               { ...handlerContext, toolName: TOOL_NAME },
-              input,
+              params,
             );
+
             return {
               structuredContent: result,
               content: [
                 {
-                  type: "image",
-                  data: result.data,
-                  mimeType: result.mimeType,
+                  type: "text",
+                  text: `Success: ${JSON.stringify(result, null, 2)}`,
                 },
               ],
             };
@@ -99,7 +84,7 @@ export const registerFetchImageTestTool = async (
             const mcpError = ErrorHandler.handleError(error, {
               operation: `tool:${TOOL_NAME}`,
               context: handlerContext,
-              input,
+              input: params,
             }) as McpError;
 
             return {
@@ -114,7 +99,11 @@ export const registerFetchImageTestTool = async (
           }
         },
       );
-      logger.notice(`Tool '${TOOL_NAME}' registered.`, registrationContext);
+
+      logger.info(
+        `Tool '${TOOL_NAME}' registered successfully.`,
+        registrationContext,
+      );
     },
     {
       operation: `RegisteringTool_${TOOL_NAME}`,

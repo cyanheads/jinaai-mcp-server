@@ -1,9 +1,9 @@
-# mcp-ts-template - Directory Structure
+# jinaai-mcp-server - Directory Structure
 
-Generated on: 2025-08-01 14:55:24
+Generated on: 2025-08-03 10:56:28
 
 ```
-mcp-ts-template
+jinaai-mcp-server
 ├── .clinerules
 │   └── clinerules.md
 ├── .github
@@ -14,11 +14,11 @@ mcp-ts-template
 │   └── settings.json
 ├── coverage
 ├── docs
-│   ├── api-references
-│   │   ├── duckDB.md
-│   │   ├── jsdoc-standard-tags.md
-│   │   └── typedoc-reference.md
 │   ├── best-practices.md
+│   ├── jina-reader-openapi.json
+│   ├── jina-search-openapi.json
+│   ├── jinaai_read_webpage_example.md
+│   ├── project-spec.md
 │   └── tree.md
 ├── scripts
 │   ├── clean.ts
@@ -33,20 +33,8 @@ mcp-ts-template
 │   │   ├── core
 │   │   │   └── managedMcpServer.ts
 │   │   ├── resources
-│   │   │   └── echoResource
-│   │   │       ├── index.ts
-│   │   │       ├── logic.ts
-│   │   │       └── registration.ts
 │   │   ├── tools
-│   │   │   ├── catFactFetcher
-│   │   │   │   ├── index.ts
-│   │   │   │   ├── logic.ts
-│   │   │   │   └── registration.ts
-│   │   │   ├── echoTool
-│   │   │   │   ├── index.ts
-│   │   │   │   ├── logic.ts
-│   │   │   │   └── registration.ts
-│   │   │   └── imageTest
+│   │   │   └── jinaReader
 │   │   │       ├── index.ts
 │   │   │       ├── logic.ts
 │   │   │       └── registration.ts
@@ -178,7 +166,6 @@ mcp-ts-template
 │   │   │   ├── rateLimiter.test.ts
 │   │   │   └── sanitization.test.ts
 │   │   └── telemetry
-│   │       └── instrumentation.test.ts
 │   └── setup.ts
 ├── .dockerignore
 ├── .env.example

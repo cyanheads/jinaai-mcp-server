@@ -1,11 +1,11 @@
-# mcp-ts-template: Architectural Standard & Developer Mandate
+# JinaAI MCP Server: Architectural Standard & Developer Mandate
 
-**Effective Date:** 2025-08-01
-**Version:** 2.3
+**Effective Date:** 2025-08-02
+**Version:** 2.4
 
 ## Preamble
 
-This document constitutes the official mandate governing all development practices, architectural patterns, and operational procedures for projects originating from the mcp-ts-template. It is the single source of truth for ensuring code quality, consistency, and long-term maintainability. Adherence to these standards is not optional; it is a condition of all development activity.
+This document constitutes the official mandate governing all development practices, architectural patterns, and operational procedures for projects originating from the `jinaai-mcp-server`. It is the single source of truth for ensuring code quality, consistency, and long-term maintainability. Adherence to these standards is not optional; it is a condition of all development activity.
 
 ## I. Core Architectural Principles
 
@@ -15,17 +15,17 @@ The architecture is founded upon a strict separation of concerns to guarantee mo
 
 This is the immutable cornerstone of the error-handling and control-flow strategy.
 
-**Core Logic (logic.ts):** This layer's sole responsibility is the execution of business logic. It shall be pure, self-contained, and stateless where possible. If an operational or validation error occurs, it must terminate its execution by throwing a structured McpError. Logic files shall not contain try...catch blocks for the purpose of formatting a final response.
+**Core Logic (logic.ts):** This layer's sole responsibility is the execution of business logic. It shall be pure, self-contained, and stateless where possible. If an operational or validation error occurs, it must terminate its execution by throwing a structured `McpError`. Logic files shall not contain `try...catch` blocks for the purpose of formatting a final response.
 
-**Handlers (registration.ts, Transports):** This layer's responsibility is to interface with the transport layer (e.g., MCP, HTTP), invoke core logic, and manage the final response lifecycle. It must wrap every call to the logic layer in a try...catch block. This is the exclusive location where errors are caught, processed by the ErrorHandler, and formatted into a definitive CallToolResult or HTTP response.
+**Handlers (registration.ts, Transports):** This layer's responsibility is to interface with the transport layer (e.g., MCP, HTTP), invoke core logic, and manage the final response lifecycle. It must wrap every call to the logic layer in a `try...catch` block. This is the exclusive location where errors are caught, processed by the `ErrorHandler`, and formatted into a definitive `CallToolResult` or HTTP response.
 
 ### 2. Structured, Traceable Operations
 
 Every operation must be fully traceable from initiation to completion via structured logging and context propagation.
 
-**RequestContext:** Any significant operation shall be initiated by creating a RequestContext via requestContextService.createRequestContext(). This context, containing a unique requestId, must be passed as an argument through the entire call stack of the operation.
+**RequestContext:** Any significant operation shall be initiated by creating a `RequestContext` via `requestContextService.createRequestContext()`. This context, containing a unique `requestId`, must be passed as an argument through the entire call stack of the operation.
 
-**Logger:** All logging shall be performed through the centralized logger singleton. Every log entry must include the RequestContext to ensure traceability.
+**Logger:** All logging shall be performed through the centralized logger singleton. Every log entry must include the `RequestContext` to ensure traceability.
 
 ### 3. Comprehensive Observability (OpenTelemetry)
 
@@ -54,9 +54,9 @@ This section outlines the complete operational flow of the application, from ini
 
 3.  **Server Orchestration (`src/mcp-server/server.ts`):** This script orchestrates the creation and configuration of the MCP server itself.
     - Creates the core `McpServer` instance from the SDK.
-    - **Crucially, it imports and calls the `register...` function from every tool and resource** (e.g., `await registerEchoTool(server)`). This is the single point where all components are attached to the server.
+    - **Crucially, it imports and calls the `register...` function from every tool and resource** (e.g., `await registerJinaReaderTool(server)`). This is the single point where all components are attached to the server.
 
-4.  **Tool Registration (`src/mcp-server/tools/toolName/registration.ts`):** During startup, the `registerEchoTool` function is executed.
+4.  **Tool Registration (`src/mcp-server/tools/toolName/registration.ts`):** During startup, the `registerJinaReaderTool` function is executed.
     - It calls `server.registerTool()`, passing the tool's metadata (name, description, schemas) and the **runtime handler function**.
     - The `ErrorHandler.tryCatch` wrapper ensures that any failure during this registration step is caught, preventing a server startup failure. The handler function itself is **not** executed at this time; it is merely registered.
 
@@ -64,14 +64,14 @@ This section outlines the complete operational flow of the application, from ini
 
 1.  **Transport Layer:** The server's transport (e.g., HTTP or stdio) receives an incoming tool call request from an MCP client. An OTel span is automatically created for the incoming request.
 
-2.  **Server Core:** The `McpServer` instance parses the request, validates it against the registered input schema for the requested tool (e.g., `echo_message`), and invokes the corresponding handler function that was provided during registration.
+2.  **Server Core:** The `McpServer` instance parses the request, validates it against the registered input schema for the requested tool (e.g., `jinaai_read_webpage`), and invokes the corresponding handler function that was provided during registration.
 
 3.  **Handler Execution (`src/mcp-server/tools/toolName/registration.ts`):** The runtime handler function is now executed.
     - It creates a new, child `RequestContext` which is automatically populated with the `traceId` and `spanId` from the active OTel span.
     - The `try...catch` block begins.
-    - It calls the core logic function (e.g., `echoToolLogic()`), which is wrapped by `measureToolExecution` to create a dedicated child span for the tool's execution.
+    - It calls the core logic function (e.g., `readWebpageToolLogic()`), which is wrapped by `measureToolExecution` to create a dedicated child span for the tool's execution.
 
-4.  **Logic Execution (`src/mcp-server/tools/toolName/logic.ts`):** The `echoToolLogic` function runs within its own OTel span.
+4.  **Logic Execution (`src/mcp-server/tools/toolName/logic.ts`):** The `readWebpageToolLogic` function runs within its own OTel span.
     - It performs its pure business logic.
     - On success, it returns a structured response object. The span's status is set to `OK`.
     - On failure, it **throws** a structured `McpError`.
@@ -88,175 +88,146 @@ This section mandates the workflow for creating and modifying all tools. Deviati
 
 ### A. File and Directory Structure
 
-Each tool shall reside in a dedicated directory within src/mcp-server/tools/. The structure is fixed as follows:
+Each tool shall reside in a dedicated directory within `src/mcp-server/tools/`. The structure is fixed as follows:
 
 - **`toolName/`**
-  - **`index.ts`**: A barrel file that performs a single function: exporting the register... function from registration.ts. No other logic shall exist in this file.
+  - **`index.ts`**: A barrel file that performs a single function: exporting the `register...` function from `registration.ts`. No other logic shall exist in this file.
   - **`logic.ts`**: Contains the tool's core business logic. It must define and export the tool's Zod input schema, all inferred TypeScript types (input and output), and the primary logic function.
-  - **`registration.ts`**: Registers the tool with the MCP server. It imports from logic.ts and strictly implements the "Handler" role as defined in the core principles.
+  - **`registration.ts`**: Registers the tool with the MCP server. It imports from `logic.ts` and strictly implements the "Handler" role as defined in the core principles.
 
-### B. The Canonical Pattern: echoTool
+### B. The Canonical Pattern: Jina AI Reader Tool
 
-The echoTool is the authoritative implementation and shall be used as the template for all new tool development.
+The `jinaai_read_webpage` tool is the authoritative implementation and shall be used as the template for all new tool development. It demonstrates configuration management, external API interaction, and robust error handling.
 
 **Step 1: Define Schema and Logic (logic.ts)**
-The `logic.ts` file defines the tool's contract (schemas) and its core function. It remains pure and throws errors when its contract cannot be fulfilled. The JSDoc header includes a `@see` link for easy navigation to the corresponding handler file.
+The `logic.ts` file defines the tool's contract (schemas) and its core function. It remains pure, handles configuration checks, and throws errors when its contract cannot be fulfilled.
 
 ```typescript
 /**
- * @fileoverview Defines the core logic, schemas, and types for the `echo_message` tool.
- * This module is the single source of truth for the tool's data contracts (Zod schemas)
- * and its pure business logic.
- * @module src/mcp-server/tools/echoTool/logic
- * @see {@link src/mcp-server/tools/echoTool/registration.ts} for the handler and registration logic.
+ * @fileoverview Defines the core logic, schemas, and types for the `jinaai_read_webpage` tool.
+ * @module src/mcp-server/tools/jinaReader/logic
+ * @see {@link src/mcp-server/tools/jinaReader/registration.ts} for the handler and registration logic.
  */
 
 import { z } from "zod";
+import { config } from "../../../config/index.js";
 import { BaseErrorCode, McpError } from "../../../types-global/errors.js";
 import { logger, type RequestContext } from "../../../utils/index.js";
 
-// Defines the valid formatting modes for the echo tool operation.
-export const ECHO_MODES = ["standard", "uppercase", "lowercase"] as const;
-
-// Zod schema defining the input parameters for the `echo_message` tool.
-// CRITICAL: The descriptions are sent to the LLM and must be clear.
-export const EchoToolInputSchema = z.object({
-  message: z
+export const ReadWebpageInputSchema = z.object({
+  url: z
     .string()
-    .min(1, "Message cannot be empty.")
-    .max(1000, "Message cannot exceed 1000 characters.")
+    .url({ message: "A valid URL must be provided." })
+    .describe("The fully-qualified URL of the webpage to read."),
+  format: z
+    .enum(["Default", "Markdown", "HTML", "Text"])
+    .default("Default")
     .describe(
-      "The message to echo back. To trigger a test error, provide the exact message 'fail'.",
+      "The desired text-based output format. 'Default' provides the best available text representation.",
     ),
-  mode: z
-    .enum(ECHO_MODES)
-    .optional()
-    .default("standard")
-    .describe(
-      "Specifies how the message should be formatted. Defaults to 'standard'.",
-    ),
-  repeat: z
-    .number()
-    .int()
-    .min(1)
-    .max(10)
-    .optional()
-    .default(1)
-    .describe("The number of times to repeat the message. Defaults to 1."),
-  includeTimestamp: z
+  with_links: z
     .boolean()
-    .optional()
     .default(true)
     .describe(
-      "Whether to include an ISO 8601 timestamp in the response. Defaults to true.",
+      "If true, includes hyperlinks in the extracted content. (Default: true)",
     ),
-});
-
-// Zod schema for the successful response of the `echo_message` tool.
-export const EchoToolResponseSchema = z.object({
-  originalMessage: z
-    .string()
-    .describe("The original message provided in the input."),
-  formattedMessage: z
-    .string()
-    .describe("The message after applying the specified formatting mode."),
-  repeatedMessage: z
-    .string()
-    .describe("The formatted message repeated the specified number of times."),
-  mode: z.enum(ECHO_MODES).describe("The formatting mode that was applied."),
-  repeatCount: z
-    .number()
-    .int()
-    .min(1)
-    .describe("The number of times the message was repeated."),
-  timestamp: z
-    .string()
-    .datetime()
-    .optional()
+  with_images: z
+    .boolean()
+    .default(false)
     .describe(
-      "Optional ISO 8601 timestamp of when the response was generated.",
+      "If true, includes images in the extracted content. (Default: false)",
+    ),
+  with_generated_alt: z
+    .boolean()
+    .default(true)
+    .describe(
+      "If true, generates descriptive alt text for images. (Default: true)",
+    ),
+  no_cache: z
+    .boolean()
+    .default(true)
+    .describe(
+      "If true, bypasses any cached version of the page and fetches a fresh copy. (Default: true)",
     ),
 });
 
-// Inferred TypeScript types
-export type EchoToolInput = z.infer<typeof EchoToolInputSchema>;
-export type EchoToolResponse = z.infer<typeof EchoToolResponseSchema>;
+export const ReadWebpageResponseSchema = z.object({
+  url: z.string().url(),
+  content: z.string().describe("The processed content of the webpage."),
+  format: z.string().describe("The format of the returned content."),
+});
 
-/**
- * Processes the core logic for the `echo_message` tool.
- * This function is pure; it processes inputs and returns a result or throws an error.
- *
- * @param params - The validated input parameters.
- * @param context - The request context for logging and tracing.
- * @returns A promise resolving with the structured response data.
- * @throws {McpError} If the logic encounters an unrecoverable issue.
- */
-export async function echoToolLogic(
-  params: EchoToolInput,
+export type ReadWebpageInput = z.infer<typeof ReadWebpageInputSchema>;
+export type ReadWebpageResponse = z.infer<typeof ReadWebpageResponseSchema>;
+
+export async function readWebpageToolLogic(
+  params: ReadWebpageInput,
   context: RequestContext,
-): Promise<EchoToolResponse> {
-  logger.debug("Processing echo message logic.", {
+): Promise<ReadWebpageResponse> {
+  logger.debug("Processing read webpage logic.", {
     ...context,
     toolInput: params,
   });
 
-  // The logic layer MUST throw a structured error on failure.
-  if (params.message === "fail") {
+  if (!config.jinaApiKey) {
     throw new McpError(
-      BaseErrorCode.VALIDATION_ERROR,
-      "Deliberate failure triggered: the message was 'fail'.",
-      { toolName: "echo_message" },
+      BaseErrorCode.CONFIGURATION_ERROR,
+      "Jina API key is not configured.",
+      { toolName: "jinaai_read_webpage" },
     );
   }
 
-  let formattedMessage = params.message;
-  switch (params.mode) {
-    case "uppercase":
-      formattedMessage = params.message.toUpperCase();
-      break;
-    case "lowercase":
-      formattedMessage = params.message.toLowerCase();
-      break;
-  }
-
-  const repeatedMessage = Array(params.repeat).fill(formattedMessage).join(" ");
-
-  const response: EchoToolResponse = {
-    originalMessage: params.message,
-    formattedMessage,
-    repeatedMessage,
-    mode: params.mode,
-    repeatCount: params.repeat,
+  const headers = {
+    Authorization: `Bearer ${config.jinaApiKey}`,
+    Accept: "text/event-stream",
+    "X-Engine": "browser",
+    "X-Locale": "en-US",
+    "X-Proxy": "auto",
+    "X-Respond-With": "readerlm-v2",
+    "X-With-Generated-Alt": params.with_generated_alt.toString(),
   };
 
-  if (params.includeTimestamp) {
-    response.timestamp = new Date().toISOString();
+  const response = await fetch(`https://r.jina.ai/${params.url}`, { headers });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new McpError(
+      BaseErrorCode.INTERNAL_ERROR,
+      `Jina API request failed with status ${response.status}: ${errorText}`,
+      {
+        toolName: "jinaai_read_webpage",
+        statusCode: response.status,
+      },
+    );
   }
 
-  logger.debug("Echo message processed successfully.", {
+  const content = await response.text();
+
+  const result: ReadWebpageResponse = {
+    url: params.url,
+    content,
+    format: params.format,
+  };
+
+  logger.debug("Read webpage processed successfully.", {
     ...context,
     responseSummary: {
-      messageLength: response.repeatedMessage.length,
-      timestampGenerated: !!response.timestamp,
+      contentLength: result.content.length,
     },
   });
 
-  return response;
+  return result;
 }
 ```
-
-````
 
 **Step 2: Register the Tool and Handle All Outcomes (registration.ts)**
 The `registration.ts` file acts as the handler. It connects the logic to the MCP server, wraps the registration in a top-level error handler, and wraps each tool invocation in another error handler. This ensures maximum stability.
 
 ```typescript
 /**
- * @fileoverview Handles registration and error handling for the `echo_message` tool.
- * This module acts as the "handler" layer, connecting the pure business logic to the
- * MCP server and ensuring all outcomes (success or failure) are handled gracefully.
- * @module src/mcp-server/tools/echoTool/registration
- * @see {@link src/mcp-server/tools/echoTool/logic.ts} for the core business logic and schemas.
+ * @fileoverview Handles registration and error handling for the `jinaai_read_webpage` tool.
+ * @module src/mcp-server/tools/jinaReader/registration
+ * @see {@link src/mcp-server/tools/jinaReader/logic.ts} for the core business logic and schemas.
  */
 
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
@@ -264,30 +235,23 @@ import { BaseErrorCode, McpError } from "../../../types-global/errors.js";
 import {
   ErrorHandler,
   logger,
-  requestContextService
+  measureToolExecution,
+  requestContextService,
 } from "../../../utils/index.js";
 import {
-  EchoToolInput,
-  EchoToolInputSchema,
-  echoToolLogic,
-  EchoToolResponseSchema,
+  ReadWebpageInput,
+  ReadWebpageInputSchema,
+  ReadWebpageResponseSchema,
+  readWebpageToolLogic,
 } from "./logic.js";
 
-// The unique name for the tool, used for registration and identification.
-const TOOL_NAME = "echo_message";
+const TOOL_NAME = "jinaai_read_webpage";
+const TOOL_DESCRIPTION =
+  "Extracts and processes the main content from a given URL using Jina AI's ReaderLM engine for text extraction. It returns a clean, markdown-formatted text representation of the content, suitable for further analysis or summarization. You can use this tool to fetch content from a URL.";
 
-// A concise description for the LLM. More detailed guidance should be in the
-// parameter descriptions within the Zod schema in `logic.ts`.
-const TOOL_DESCRIPTION = `Echoes a message back with optional formatting and repetition.`;
-
-/**
- * Registers the 'echo_message' tool and its handler with the provided MCP server instance.
- * This function uses ErrorHandler.tryCatch to ensure that any failure during the
- * registration process itself is caught and logged, preventing server startup failures.
- *
- * @param server - The MCP server instance to register the tool with.
- */
-export const registerEchoTool = async (server: McpServer): Promise<void> => {
+export const registerJinaReaderTool = async (
+  server: McpServer,
+): Promise<void> => {
   const registrationContext = requestContextService.createRequestContext({
     operation: "RegisterTool",
     toolName: TOOL_NAME,
@@ -300,44 +264,55 @@ export const registerEchoTool = async (server: McpServer): Promise<void> => {
       server.registerTool(
         TOOL_NAME,
         {
-          title: "Echo Message",
+          title: "Read Webpage",
           description: TOOL_DESCRIPTION,
-          inputSchema: EchoToolInputSchema.shape,
-          outputSchema: EchoToolResponseSchema.shape,
+          inputSchema: ReadWebpageInputSchema.shape,
+          outputSchema: ReadWebpageResponseSchema.shape,
           annotations: {
-            readOnlyHint: true, // This tool does not modify state.
-            openWorldHint: false, // This tool does not interact with external, unpredictable systems.
+            readOnlyHint: true,
+            openWorldHint: true,
           },
         },
-        // This is the runtime handler for the tool.
-        async (params: EchoToolInput, callContext: Record<string, unknown>) => {
+        async (
+          params: ReadWebpageInput,
+          callContext: Record<string, unknown>,
+        ) => {
+          const sessionId =
+            typeof callContext?.sessionId === "string"
+              ? callContext.sessionId
+              : undefined;
+
           const handlerContext = requestContextService.createRequestContext({
             parentContext: callContext,
             operation: "HandleToolRequest",
             toolName: TOOL_NAME,
+            sessionId,
             input: params,
           });
 
           try {
-            // 1. INVOKE the core logic within the try block.
-            const result = await echoToolLogic(params, handlerContext);
+            const result = await measureToolExecution(
+              () => readWebpageToolLogic(params, handlerContext),
+              { ...handlerContext, toolName: TOOL_NAME },
+              params,
+            );
 
-            // 2. FORMAT the SUCCESS response.
             return {
               structuredContent: result,
               content: [
-                { type: "text", text: `Success: ${JSON.stringify(result, null, 2)}` },
+                {
+                  type: "text",
+                  text: `Success: ${JSON.stringify(result, null, 2)}`,
+                },
               ],
             };
           } catch (error) {
-            // 3. CATCH and PROCESS any error from the logic layer.
             const mcpError = ErrorHandler.handleError(error, {
               operation: `tool:${TOOL_NAME}`,
               context: handlerContext,
               input: params,
             }) as McpError;
 
-            // 4. FORMAT the ERROR response.
             return {
               isError: true,
               content: [{ type: "text", text: `Error: ${mcpError.message}` }],
@@ -360,7 +335,7 @@ export const registerEchoTool = async (server: McpServer): Promise<void> => {
       operation: `RegisteringTool_${TOOL_NAME}`,
       context: registrationContext,
       errorCode: BaseErrorCode.INITIALIZATION_FAILED,
-      critical: true, // A failure to register a tool is a critical startup error.
+      critical: true,
     },
   );
 };
@@ -370,43 +345,43 @@ export const registerEchoTool = async (server: McpServer): Promise<void> => {
 
 The workflow for creating Resources mirrors that of Tools, with a focus on data retrieval.
 
-**File Structure:** The structure is identical to that of tools, but located under src/mcp-server/resources/.
+**File Structure:** The structure is identical to that of tools, but located under `src/mcp-server/resources/`.
 
-**Registration:** Registration shall use server.resource(registrationName, template, metadata, handler). The handler receives URI parameters and must return an object conforming to the { contents: [{ uri, blob, mimeType }] } structure.
+**Registration:** Registration shall use `server.resource(registrationName, template, metadata, handler)`. The handler receives URI parameters and must return an object conforming to the `{ contents: [{ uri, blob, mimeType }] }` structure.
 
 ## IV. External Service Integration
 
 Interaction with any external service (e.g., database, third-party API) shall be encapsulated within a singleton provider class.
 
-**Encapsulation:** Each service provider (e.g., src/services/llm-providers/openRouterProvider.ts) is responsible for its own client, configuration, and API-specific logic.
+**Encapsulation:** Each service provider (e.g., `src/services/llm-providers/openRouterProvider.ts`) is responsible for its own client, configuration, and API-specific logic.
 
-**Singleton Pattern:** The singleton pattern shall be employed to manage a single, shared instance of a service client across the application (e.g., src/services/supabase/supabaseClient.ts).
+**Singleton Pattern:** The singleton pattern shall be employed to manage a single, shared instance of a service client across the application (e.g., `src/services/supabase/supabaseClient.ts`).
 
-**Usage:** The singleton instance shall be imported directly into the logic.ts file where it is required.
+**Usage:** The singleton instance shall be imported directly into the `logic.ts` file where it is required.
 
 ## V. Code Quality and Documentation Mandates
 
-**JSDoc:** Every file shall begin with a @fileoverview and @module block. All exported functions, types, and classes shall have complete JSDoc comments.
+**JSDoc:** Every file shall begin with a `@fileoverview` and `@module` block. All exported functions, types, and classes shall have complete JSDoc comments.
 
-**LLM-Facing Descriptions:** The tool's title, description, and all parameter descriptions defined in Zod schemas (.describe()) are transmitted directly to the LLM to inform its tool-use decisions. These descriptions must be written with the LLM as the primary audience. They must be descriptive, concise, and explicitly state any requirements, constraints, or expected formats outside of the Zod shape itself. This is a primary interface for prompting the model and is critical for correct tool invocation.
+**LLM-Facing Descriptions:** The tool's title, description, and all parameter descriptions defined in Zod schemas (`.describe()`) are transmitted directly to the LLM to inform its tool-use decisions. These descriptions must be written with the LLM as the primary audience. They must be descriptive, concise, and explicitly state any requirements, constraints, or expected formats outside of the Zod shape itself. This is a primary interface for prompting the model and is critical for correct tool invocation.
 
 **Clarity and Intent:** Code shall be self-documenting. Variable and function names must be explicit and unambiguous. Brevity is secondary to clarity.
 
 **Immutability:** Functional approaches and immutable data structures are the required standard to prevent side effects. State mutation must be justified and localized.
 
-**Formatting:** All code must be formatted using Prettier (npm run format) prior to being committed. This will be enforced by CI.
+**Formatting:** All code must be formatted using Prettier (`npm run format`) prior to being committed. This will be enforced by CI.
 
 ## VI. Security Mandates
 
 **Input Sanitization:** All input from any external source (tool arguments, API responses) shall be treated as untrusted and validated with Zod. Use sanitization utilities for explicit sanitization where Zod parsing is insufficient.
 
-**Secrets Management:** Hardcoding secrets is a direct violation of this standard. All secrets (API keys, credentials) shall be loaded exclusively from environment variables via the config module.
+**Secrets Management:** Hardcoding secrets is a direct violation of this standard. All secrets (API keys, credentials) shall be loaded exclusively from environment variables via the `config` module.
 
 **Authentication & Authorization:**
-The server's authentication mode is configured via the MCP_AUTH_MODE environment variable.
-Tools requiring specific permissions shall be protected by checking scopes. The withRequiredScopes(["scope:read"]) utility must be used inside the tool handler for this purpose.
+The server's authentication mode is configured via the `MCP_AUTH_MODE` environment variable.
+Tools requiring specific permissions shall be protected by checking scopes. The `withRequiredScopes(["scope:read"])` utility must be used inside the tool handler for this purpose.
 
-**Rate Limiting:** To prevent abuse, handlers for public-facing or resource-intensive tools shall be protected by the centralized rateLimiter.
+**Rate Limiting:** To prevent abuse, handlers for public-facing or resource-intensive tools shall be protected by the centralized `rateLimiter`.
 
 ## VII. Testing Mandates
 
@@ -461,7 +436,7 @@ When mocking is necessary, it must be **surgical and justified**:
 **Preferred Pattern - Integration:**
 
 ```typescript
-describe("Echo Tool Integration", () => {
+describe("Jina Reader Tool Integration", () => {
   let server: McpServer;
   let transport: StreamableHTTPServerTransport;
 
@@ -486,7 +461,7 @@ describe("Echo Tool Integration", () => {
 
 ```typescript
 // AVOID: This doesn't test real integration
-vi.mock("../logic.js", () => ({ echoToolLogic: vi.fn() }));
+vi.mock("../logic.js", () => ({ readWebpageToolLogic: vi.fn() }));
 ```
 
 **G. Test File Organization**

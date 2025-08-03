@@ -1,14 +1,14 @@
 {
-  "name": "mcp-ts-template",
-  "version": "1.8.1",
-  "description": "A production-grade TypeScript template for building robust Model Context Protocol (MCP) servers, featuring built-in observability with OpenTelemetry, advanced error handling, comprehensive utilities, and a modular architecture.",
+  "name": "jinaai-mcp-server",
+  "version": "1.0.0",
+  "description": "A Model Context Protocol (MCP) server that provides intelligent web reading capabilities using the Jina AI Reader API. It extracts clean, LLM-ready content from any URL.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
     "dist"
   ],
   "bin": {
-    "mcp-ts-template": "dist/index.js"
+    "jinaai-mcp-server": "dist/index.js"
   },
   "exports": {
     ".": {
@@ -19,12 +19,12 @@
   "type": "module",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/cyanheads/mcp-ts-template.git"
+    "url": "git+https://github.com/cyanheads/jinaai-mcp-server.git"
   },
   "bugs": {
-    "url": "https://github.com/cyanheads/mcp-ts-template/issues"
+    "url": "https://github.com/cyanheads/jinaai-mcp-server/issues"
   },
-  "homepage": "https://github.com/cyanheads/mcp-ts-template#readme",
+  "homepage": "https://github.com/cyanheads/jinaai-mcp-server#readme",
   "scripts": {
     "build": "tsc",
     "postbuild": "tsx scripts/make-executable.ts dist/index.js",
@@ -111,33 +111,23 @@
   },
   "keywords": [
     "typescript",
-    "template",
     "mcp",
     "model-context-protocol",
     "agent",
-    "autonomous-agent",
-    "agent-framework",
-    "architecture",
-    "error-handling",
     "llm",
     "ai-integration",
     "mcp-server",
-    "mcp-client",
-    "hono",
-    "stdio",
-    "http",
-    "authentication",
-    "oauth",
-    "jwt",
-    "openrouter",
-    "duckdb",
+    "jina",
+    "jina-ai",
+    "web-reader",
+    "content-extraction",
+    "scraping",
+    "llm-content-preparation",
     "zod",
     "opentelemetry",
-    "observability",
-    "tracing",
-    "metrics"
+    "observability"
   ],
-  "author": "cyanheads <casey@caseyjhand.com> (https://github.com/cyanheads/mcp-ts-template#readme)",
+  "author": "cyanheads <casey@caseyjhand.com> (https://github.com/cyanheads/jinaai-mcp-server#readme)",
   "license": "Apache-2.0",
   "funding": [
     {

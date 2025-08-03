@@ -19,7 +19,7 @@ dotenv.config();
 const findProjectRoot = (startDir: string): string => {
   let currentDir = startDir;
   // If the start directory is in `dist`, start searching from the parent directory.
-  if (path.basename(currentDir) === 'dist') {
+  if (path.basename(currentDir) === "dist") {
     currentDir = path.dirname(currentDir);
   }
   while (true) {
@@ -75,7 +75,8 @@ const loadPackageJson = (): { name: string; version: string } => {
     const parsed = JSON.parse(fileContents);
     return {
       name: typeof parsed.name === "string" ? parsed.name : fallback.name,
-      version: typeof parsed.version === "string" ? parsed.version : fallback.version,
+      version:
+        typeof parsed.version === "string" ? parsed.version : fallback.version,
     };
   } catch (error) {
     if (process.stdout.isTTY) {
@@ -163,6 +164,9 @@ const EnvSchema = z.object({
   SUPABASE_URL: z.string().url("SUPABASE_URL must be a valid URL.").optional(),
   SUPABASE_ANON_KEY: z.string().optional(),
   SUPABASE_SERVICE_ROLE_KEY: z.string().optional(),
+
+  // --- Jina AI Configuration ---
+  JINA_API_KEY: z.string().optional(),
 
   // --- START: OpenTelemetry Configuration ---
   /** If 'true', OpenTelemetry will be initialized and enabled. Default: 'false'. */
@@ -341,6 +345,7 @@ export const config = {
           serviceRoleKey: env.SUPABASE_SERVICE_ROLE_KEY,
         }
       : undefined,
+  jinaApiKey: env.JINA_API_KEY,
   openTelemetry: {
     enabled: env.OTEL_ENABLED,
     serviceName: env.OTEL_SERVICE_NAME || env.MCP_SERVER_NAME || pkg.name,

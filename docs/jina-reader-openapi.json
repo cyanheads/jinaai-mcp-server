@@ -1,0 +1,294 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Jina Reader API",
+    "version": "N/A",
+    "description": "Jina Reader API openapi document",
+    "x-logo": { "url": "/favicon.ico" }
+  },
+  "servers": [{ "url": "https://r.jina.ai/" }],
+  "paths": {
+    "/": {
+      "get": {
+        "tags": ["misc", "crawl"],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "description": "Jina Token for authentication.\n\n- Member of &lt;JinaEmbeddingsAuthDTO&gt;\n\n- Authorization: Bearer {YOUR_JINA_TOKEN}",
+            "in": "header",
+            "schema": { "anyOf": [{ "type": "string", "format": "token" }] }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "title": "IntegrityEnvelopeWrappedString",
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "number",
+                          "summary": "Envelope code.\n\nMirror of HTTP status code",
+                          "description": "[REQUIRED]\n\nEnvelope code.\n\nMirror of HTTP status code\n\n- Cast to: &lt; **number** &gt;\n\n- Member of &lt;IntegrityEnvelope&gt;\n\n- Defaults to: 200",
+                          "default": 200
+                        },
+                        "status": {
+                          "type": "number",
+                          "summary": "Envelope status.\n\nIn extension to HTTP status code",
+                          "description": "[REQUIRED]\n\nEnvelope status.\n\nIn extension to HTTP status code\n\n- Cast to: &lt; **number** &gt;\n\n- Member of &lt;IntegrityEnvelope&gt;\n\n- Defaults to: 20000",
+                          "default": 20000
+                        },
+                        "data": {
+                          "type": "string",
+                          "summary": "The result payload you expect",
+                          "description": "The result payload you expect\n\n- Cast to: &lt; **string** &gt;\n\n- Member of &lt;IntegrityEnvelope&gt;"
+                        },
+                        "meta": {
+                          "description": "The metadata that the payload sometimes came with\n\n- Cast to: &lt; **object** &gt;\n\n- Member of &lt;IntegrityEnvelope&gt;",
+                          "nullable": true,
+                          "summary": "The metadata that the payload sometimes came with"
+                        }
+                      },
+                      "required": ["code", "status"],
+                      "primitive": true
+                    },
+                    {
+                      "title": "IntegrityEnvelopeWrappedObject",
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "number",
+                          "summary": "Envelope code.\n\nMirror of HTTP status code",
+                          "description": "[REQUIRED]\n\nEnvelope code.\n\nMirror of HTTP status code\n\n- Cast to: &lt; **number** &gt;\n\n- Member of &lt;IntegrityEnvelope&gt;\n\n- Defaults to: 200",
+                          "default": 200
+                        },
+                        "status": {
+                          "type": "number",
+                          "summary": "Envelope status.\n\nIn extension to HTTP status code",
+                          "description": "[REQUIRED]\n\nEnvelope status.\n\nIn extension to HTTP status code\n\n- Cast to: &lt; **number** &gt;\n\n- Member of &lt;IntegrityEnvelope&gt;\n\n- Defaults to: 20000",
+                          "default": 20000
+                        },
+                        "data": {
+                          "description": "The result payload you expect\n\n- Cast to: &lt; **object** &gt;\n\n- Member of &lt;IntegrityEnvelope&gt;",
+                          "nullable": true,
+                          "summary": "The result payload you expect"
+                        },
+                        "meta": {
+                          "description": "The metadata that the payload sometimes came with\n\n- Cast to: &lt; **object** &gt;\n\n- Member of &lt;IntegrityEnvelope&gt;",
+                          "nullable": true,
+                          "summary": "The metadata that the payload sometimes came with"
+                        }
+                      },
+                      "required": ["code", "status"],
+                      "primitive": true
+                    }
+                  ]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "summary": "getIndex"
+      },
+      "post": {
+        "tags": ["crawl"],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": { "schema": { "allOf": [] } },
+            "multipart/form-data": { "schema": { "allOf": [] } },
+            "application/x-www-form-urlencoded": {
+              "schema": { "type": "object", "properties": {} }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "IntegrityEnvelopeWrappedString",
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "number",
+                      "summary": "Envelope code.\n\nMirror of HTTP status code",
+                      "description": "[REQUIRED]\n\nEnvelope code.\n\nMirror of HTTP status code\n\n- Cast to: &lt; **number** &gt;\n\n- Member of &lt;IntegrityEnvelope&gt;\n\n- Defaults to: 200",
+                      "default": 200
+                    },
+                    "status": {
+                      "type": "number",
+                      "summary": "Envelope status.\n\nIn extension to HTTP status code",
+                      "description": "[REQUIRED]\n\nEnvelope status.\n\nIn extension to HTTP status code\n\n- Cast to: &lt; **number** &gt;\n\n- Member of &lt;IntegrityEnvelope&gt;\n\n- Defaults to: 20000",
+                      "default": 20000
+                    },
+                    "data": {
+                      "type": "string",
+                      "summary": "The result payload you expect",
+                      "description": "The result payload you expect\n\n- Cast to: &lt; **string** &gt;\n\n- Member of &lt;IntegrityEnvelope&gt;"
+                    },
+                    "meta": {
+                      "description": "The metadata that the payload sometimes came with\n\n- Cast to: &lt; **object** &gt;\n\n- Member of &lt;IntegrityEnvelope&gt;",
+                      "nullable": true,
+                      "summary": "The metadata that the payload sometimes came with"
+                    }
+                  },
+                  "required": ["code", "status"],
+                  "primitive": true
+                }
+              },
+              "text/event-stream": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/OutputServerEventStream@0x09"
+                    }
+                  ]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "summary": "crawlByPostingToIndex"
+      }
+    },
+    "/{url}": {
+      "get": {
+        "tags": ["crawl"],
+        "parameters": [{ "name": "url", "in": "path", "required": true }],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "IntegrityEnvelopeWrappedString",
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "number",
+                      "summary": "Envelope code.\n\nMirror of HTTP status code",
+                      "description": "[REQUIRED]\n\nEnvelope code.\n\nMirror of HTTP status code\n\n- Cast to: &lt; **number** &gt;\n\n- Member of &lt;IntegrityEnvelope&gt;\n\n- Defaults to: 200",
+                      "default": 200
+                    },
+                    "status": {
+                      "type": "number",
+                      "summary": "Envelope status.\n\nIn extension to HTTP status code",
+                      "description": "[REQUIRED]\n\nEnvelope status.\n\nIn extension to HTTP status code\n\n- Cast to: &lt; **number** &gt;\n\n- Member of &lt;IntegrityEnvelope&gt;\n\n- Defaults to: 20000",
+                      "default": 20000
+                    },
+                    "data": {
+                      "type": "string",
+                      "summary": "The result payload you expect",
+                      "description": "The result payload you expect\n\n- Cast to: &lt; **string** &gt;\n\n- Member of &lt;IntegrityEnvelope&gt;"
+                    },
+                    "meta": {
+                      "description": "The metadata that the payload sometimes came with\n\n- Cast to: &lt; **object** &gt;\n\n- Member of &lt;IntegrityEnvelope&gt;",
+                      "nullable": true,
+                      "summary": "The metadata that the payload sometimes came with"
+                    }
+                  },
+                  "required": ["code", "status"],
+                  "primitive": true
+                }
+              },
+              "text/event-stream": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/OutputServerEventStream@0x09"
+                    }
+                  ]
+                }
+              },
+              "text/plain; charset=utf-8": { "schema": { "type": "string" } }
+            },
+            "headers": {}
+          }
+        },
+        "summary": "crawl"
+      },
+      "post": {
+        "tags": ["crawl"],
+        "parameters": [{ "name": "url", "in": "path", "required": true }],
+        "requestBody": {
+          "content": {
+            "application/json": { "schema": { "allOf": [] } },
+            "multipart/form-data": { "schema": { "allOf": [] } },
+            "application/x-www-form-urlencoded": {
+              "schema": { "type": "object", "properties": {} }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "IntegrityEnvelopeWrappedString",
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "number",
+                      "summary": "Envelope code.\n\nMirror of HTTP status code",
+                      "description": "[REQUIRED]\n\nEnvelope code.\n\nMirror of HTTP status code\n\n- Cast to: &lt; **number** &gt;\n\n- Member of &lt;IntegrityEnvelope&gt;\n\n- Defaults to: 200",
+                      "default": 200
+                    },
+                    "status": {
+                      "type": "number",
+                      "summary": "Envelope status.\n\nIn extension to HTTP status code",
+                      "description": "[REQUIRED]\n\nEnvelope status.\n\nIn extension to HTTP status code\n\n- Cast to: &lt; **number** &gt;\n\n- Member of &lt;IntegrityEnvelope&gt;\n\n- Defaults to: 20000",
+                      "default": 20000
+                    },
+                    "data": {
+                      "type": "string",
+                      "summary": "The result payload you expect",
+                      "description": "The result payload you expect\n\n- Cast to: &lt; **string** &gt;\n\n- Member of &lt;IntegrityEnvelope&gt;"
+                    },
+                    "meta": {
+                      "description": "The metadata that the payload sometimes came with\n\n- Cast to: &lt; **object** &gt;\n\n- Member of &lt;IntegrityEnvelope&gt;",
+                      "nullable": true,
+                      "summary": "The metadata that the payload sometimes came with"
+                    }
+                  },
+                  "required": ["code", "status"],
+                  "primitive": true
+                }
+              },
+              "text/event-stream": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/OutputServerEventStream@0x09"
+                    }
+                  ]
+                }
+              },
+              "text/plain; charset=utf-8": { "schema": { "type": "string" } }
+            },
+            "headers": {}
+          }
+        },
+        "summary": "crawl"
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "JinaEmbeddingsAuthDTO@0x08": { "title": "JinaEmbeddingsAuthDTO" },
+      "OutputServerEventStream@0x09": {
+        "type": "string",
+        "format": "binary",
+        "description": "Binary data (stream)"
+      }
+    }
+  }
+}
