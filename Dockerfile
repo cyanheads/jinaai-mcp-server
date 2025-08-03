@@ -30,6 +30,9 @@ ENV NODE_ENV=development
 # Create a non-root user and group for better security.
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 
+# Create and set permissions for the log directory.
+RUN mkdir -p /var/log/jinaaimcp-server && chown -R appuser:appgroup /var/log/jinaaimcp-server
+
 # Copy only the necessary production artifacts from the build stage.
 # This includes the pruned production node_modules and the compiled 'dist' folder.
 COPY --from=build /usr/src/app/dist ./dist
@@ -39,12 +42,15 @@ COPY --from=build /usr/src/app/package.json ./
 # Switch to the non-root user.
 USER appuser
 
-# The server will listen on the port provided by the PORT environment variable.
+# The server will listen on the port provided by the MCP_HTTP_PORT environment variable.
 # Smithery provides this automatically. We expose it for documentation.
 EXPOSE 3018
-ENV PORT=3018
+ENV MCP_HTTP_PORT=3018
 ENV MCP_TRANSPORT_TYPE=http
+ENV MCP_SESSION_MODE=stateless
 ENV MCP_LOG_LEVEL=info
+ENV LOGS_DIR=/var/log/jinaaimcp-server
+ENV MCP_AUTH_MODE=none
 
 # The command to start the server.
 CMD ["node", "dist/index.js"]
